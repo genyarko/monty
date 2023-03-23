@@ -1,17 +1,18 @@
 /**
-  * pall - Prints all values on the stack, starting from the top
-  *
-  * Usage: pall
-  *
-  * Return: 0 on success, or EXIT_FAILURE on failure
-  */
-int main()
+ * pall - prints all the values on the stack
+ * @stack: pointer to the stack
+ * @line_number: line number of the file
+ * Return: void
+ */
+void pall(stack_t **stack, unsigned int line_number)
 {
-    printf("Printing all values in the stack:\n");
+    stack_t *temp = *stack;
 
-    // Iterate over all elements in the stack
-
-    // Print each element
-
-    return (0);
+    (void) line_number;
+    while (temp != NULL)
+    {
+        printf("%d\n", temp->n);
+        temp = temp->next;
+    }
+}eturn (0);
 }
