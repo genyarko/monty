@@ -5,7 +5,7 @@
  * @counter: line_number
  * Return: no return
 */
-void push(stack_t **head, unsigned int counter)
+void g_push(stack_t **head, unsigned int counter)
 {
 	int n, j = 0, flag = 0;
 
