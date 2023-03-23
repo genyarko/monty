@@ -8,46 +8,38 @@ bus_t bus = {NULL, NULL, NULL, 0};
 */
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
+	char *content;
+	FILE *file;
+	size_t size = 0;
+	ssize_t read_line = 1;
+	stack_t *stack = NULL;
+	unsigned int counter = 0;
 
-    FILE *file = fopen(argv[1], "r");
-    if (!file) {
-        fprintf(stderr, "Error: could not open file %s\n", argv[1]);
-        return EXIT_FAILURE;
-    }
-
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t nread;
-    unsigned int line_number = 0;
-    stack_t *stack = NULL;
-
-    while ((nread = getline(&line, &len, file)) != -1) {
-        line_number++;
-
-        // Remove trailing newline character
-        if (line[nread-1] == '\n') {
-            line[nread-1] = '\0';
-            nread--;
-        }
-
-        if (nread > 0) {
-            if (execute(line, &stack, line_number, file) == -1) {
-                fprintf(stderr, "Error: execution failed on line %u\n", line_number);
-                free(line);
-                free_stack(stack);
-                fclose(file);
-                return EXIT_FAILURE;
-            }
-        }
-    }
-
-    free(line);
-    free_stack(stack);
-    fclose(file);
-
-    return EXIT_SUCCESS;
+	if (argc != 2)
+	{
+	fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+	return EXIT_FAILURE;
+	}
+	file = fopen(argv[1], "r");
+	bus.file = file;
+	if (!file)
+	{
+		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
+		exit(EXIT_FAILURE);
+	}
+	while (read_line > 0)
+	{
+		content = NULL;
+		read_line = getline(&content, &size, file);
+		bus.content = content;
+		counter++;
+		if (read_line > 0)
+		{
+			execute(content, &stack, counter, file);
+		}
+		free(content);
+	}
+	free_stack(stack);
+	fclose(file);
+return (0);
 }
