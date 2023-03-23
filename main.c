@@ -1,41 +1,45 @@
 #include "monty.h"
+bus_t bus = {NULL, NULL, NULL, 0};
 /**
-* execute - Executes the monty commands
-* @content: string of the commands
-* @stack: Stack to be manipulated
-* @counter: counter of the lines
-* @file: File
-* Return: nothing
+* main - monty code interpreter
+* @argc: number of arguments
+* @argv: monty file location
+* Return: 0 on success
 */
-void execute(char *content, stack_t **stack, unsigned int counter, FILE *file)
+int main(int argc, char *argv[])
 {
-	char *token;
-	int i;
-	instruction_t ops[] = {
-		{"push", push}, {"pall", pall}, {"pint", pint},
-		{"pop", pop}, {"swap", swap}, {"add", add},
-		{"nop", nop}, {"sub", sub}, {"div", divide},
-		{"mul", mul}, {"mod", mod}, {"pchar", pchar},
-		{"pstr", pstr}, {"rotl", rotl}, {"rotr", rotr},
-		{NULL, NULL}
-	};
+	char *content;
+	FILE *file;
+	size_t size = 0;
+	ssize_t read_line = 1;
+	stack_t *stack = NULL;
+	unsigned int counter = 0;
 
-	token = strtok(content, DELIM);
-	if (token == NULL || token[0] == '#')
-		return;
-	for (i = 0; ops[i].opcode; i++)
+	if (argc != 2)
 	{
-		if (strcmp(token, ops[i].opcode) == 0)
-		{
-			ops[i].f(stack, counter, file);
-			break;
-		}
-	}
-	if (ops[i].opcode == NULL)
-	{
-		fprintf(stderr, "L%u: unknown instruction %s\n", counter, token);
-		free_stack(*stack);
-		fclose(file);
+		fprintf(stderr, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
+	file = fopen(argv[1], "r");
+	bus.file = file;
+	if (!file)
+	{
+		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
+		exit(EXIT_FAILURE);
+	}
+	while (read_line > 0)
+	{
+		content = NULL;
+		read_line = getline(&content, &size, file);
+		bus.content = content;
+		counter++;
+		if (read_line > 0)
+		{
+			execute(content, &stack, counter, file);
+		}
+		free(content);
+	}
+	free_stack(stack);
+	fclose(file);
+return (0);
 }
