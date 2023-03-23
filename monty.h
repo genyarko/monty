@@ -32,6 +32,11 @@ typedef struct stack_s
  */
 typedef struct bus_s
 {
+	char *line = NULL;
+    size_t len = 0;
+    ssize_t nread;
+    unsigned int line_number = 0;
+    stack_t *stack = NULL;
 	char *arg;
 	FILE *file;
 	char *content;
