@@ -1,23 +1,36 @@
 #include "monty.h"
 /**
-  * push - Pushes an element to the stack
-  * @argc: The number of command line arguments
-  * @argv: The array of command line arguments
-  *
-  * Usage: push <int>
-  *
-  * Return: 0 on success, or EXIT_FAILURE on failure
-  */
-int main(int argc, char *argv[])
+ * push - pushes an element to the stack
+ * @stack: pointer to the stack
+ * @line_number: line number of the file
+ * Return: void
+ */
+void push(stack_t **stack, unsigned int line_number)
 {
-    if (argc != 2) {
-        printf("L%d: usage: push integer\n", __LINE__);
+    stack_t *new_node;
+    int n;
+
+    if (stack == NULL)
+        return;
+
+    new_node = malloc(sizeof(stack_t));
+    if (new_node == NULL)
+    {
+        printf("Error: malloc failed\n");
         exit(EXIT_FAILURE);
     }
+    if (strlen(tokens[1]) == 0)
+    {
+        printf("L%d: usage: push integer\n", line_number);
+        free(new_node);
+        exit(EXIT_FAILURE);
+    }
+    n = atoi(tokens[1]);
+    new_node->n = n;
+    new_node->prev = NULL;
+    new_node->next = *stack;
 
-    int value = atoi(argv[1]);
-
-    printf("Pushing %d to the stack\n", value);
-
-    return (0);
-} 
+    if (*stack != NULL)
+        (*stack)->prev = new_node;
+    *stack = new_node;
+}
